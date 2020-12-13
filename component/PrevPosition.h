@@ -1,0 +1,4 @@
+#ifndef PREVPOSITION_H
+#define PREVPOSITION_H
+
+#endif // PREVPOSITION_H
