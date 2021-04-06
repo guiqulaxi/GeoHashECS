@@ -1,6 +1,6 @@
 #include "TrackSystem.h"
 #include "component/Fusion.h"
-#include "component/Position.h"
+#include "component/GCSPosition.h"
 #include "component/MovementFactor.h"
 #include "component/Movement.h"
 #include "component/Ammo.h"
@@ -17,21 +17,21 @@ void TrackSystem::tick(float deltaTime)
     {
         auto fusion=Entity::getPointer<Fusion>(eid);
 
-        auto position=Entity::getPointer<Position>(eid);
+        auto position=Entity::getPointer<GCSPosition>(eid);
 
 
         auto nearestEntity= std::min_element(fusion->target.begin(),fusion->target.end(),
                                                  [position](unsigned aeid, unsigned beid) -> bool{
-                auto postionA=Entity::getPointer<Position>(aeid);
-                auto postionB=Entity::getPointer<Position>(beid);
-                return   std::pow(postionA->x-position->x,2)+std::pow(postionA->y-position->y,2)<
-                std::pow(postionB->x-position->x,2)+std::pow(postionB->y-position->y,2);
+                auto positionA=Entity::getPointer<GCSPosition>(aeid);
+                auto positionB=Entity::getPointer<GCSPosition>(beid);
+                return  distance1(positionA->lon,positionA->lat,position->lon,position->lat)<
+                distance1(positionB->lon,positionB->lat,position->lon,position->lat);
 
          } );
         if(nearestEntity!=fusion->target.end())
         {
-            auto nearestPos= Entity::getPointer<Position>(*nearestEntity);
-            float targetAngle =std::atan2((nearestPos->y-position->y),(nearestPos->x-position->x));
+            auto nearestPos= Entity::getPointer<GCSPosition>(*nearestEntity);
+            float targetAngle =azimuth(nearestPos->lon,nearestPos->lat,nearestPos->lon,nearestPos->lat);
 
             targetAngle=targetAngle/(2*M_PI)*360;
             targetAngle=limit(targetAngle,360);

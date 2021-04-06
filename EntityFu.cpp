@@ -139,7 +139,7 @@ void Entity::destroyAll()
 	verbosity = 0;
 	for (Eid eid = 1; eid < kMaxEntities; ++eid)
 	{
-		if (entities[eid])
+        if (entities&&entities[eid])
 		{
 			Entity::destroyNow(eid);
 			count++;

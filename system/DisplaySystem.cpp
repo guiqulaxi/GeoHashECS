@@ -1,6 +1,6 @@
 #include "DisplaySystem.h"
 #include "component/Display.h"
-#include "component/Position.h"
+#include "component/GCSPosition.h"
 #include "component/Movement.h"
 #include <QPainter>
 #include <QDebug>
@@ -17,7 +17,7 @@ void DisplaySystem::tick(  float deltaTime)
     for (auto eid : all)
     {
 
-        auto position=Entity::getPointer<Position>(eid);
+        auto position=Entity::getPointer<GCSPosition>(eid);
 
         auto movement=Entity::getPointer<Movement>(eid);
 

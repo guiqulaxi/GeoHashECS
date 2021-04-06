@@ -9,7 +9,7 @@ struct Detection:Entity::Component
     Detection(float range) : range(range) {}
     Detection() {}
 
-    float range;
+    float range;//m
     static Cid cid;
 };
 

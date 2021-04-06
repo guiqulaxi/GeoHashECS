@@ -2,9 +2,10 @@
 #include <math.h>
 #include <tuple>
 #include "component/Movement.h"
-#include "component/Position.h"
+#include "component/GCSPosition.h"
 #include "component/SensorEquipment.h"
 #include "component/Platform.h"
+#include "Util.h"
 MovementSystem::MovementSystem()
 {
 
@@ -15,10 +16,9 @@ MovementSystem::MovementSystem()
      for (auto eid : all)
      {
         auto movement=Entity::getPointer<Movement>(eid);
-        auto postion=Entity::getPointer<Position>(eid);
+        auto postion=Entity::getPointer<GCSPosition>(eid);
         float dis=movement->speed*deltaTime;
-        postion->x+=dis*cosf(movement->direction/360*2*M_PI);
-        postion->y+=dis*sinf(movement->direction/360*2*M_PI);
+        polar(postion->lon,postion->lat,dis,movement->direction,postion->lon,postion->lat);
      }
 
 }
