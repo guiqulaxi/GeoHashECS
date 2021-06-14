@@ -3,7 +3,7 @@
 #include <QPainter>
 #include <QDebug>
 #include <QStyleOptionGraphicsItem>
-#include "component/Position.h"
+#include "component/GCSPosition.h"
 #include "component/SensorEquipment.h"
 #include "component/Detection.h"
 #include "component/Movement.h"
@@ -13,9 +13,9 @@ DisplayGraphicsItem::DisplayGraphicsItem( Eid eid):m_eid(eid)
 }
 QRectF DisplayGraphicsItem::boundingRect() const
 {
-    auto position= Entity::getPointer<Position>(m_eid);
+    auto position= Entity::getPointer<GCSPosition>(m_eid);
 
-    QRectF rect= QRectF(position->x-5-m_penWidth/2,position->y-5-m_penWidth/2,20+m_penWidth*2,10+m_penWidth*2);
+    QRectF rect= QRectF(position->lon-5-m_penWidth/2,position->lat-5-m_penWidth/2,20+m_penWidth*2,10+m_penWidth*2);
     if (isSelected())
     {
         auto sensorEquipment=Entity::getPointer<SensorEquipment>(m_eid);
@@ -27,8 +27,8 @@ QRectF DisplayGraphicsItem::boundingRect() const
             maxRange=qMax(detection->range,maxRange);
         }
 
-        QRectF rectsensor= QRectF(position->x-maxRange-m_penWidth/2,
-                                  -position->y-maxRange-m_penWidth/2,
+        QRectF rectsensor= QRectF(position->lon-maxRange-m_penWidth/2,
+                                  -position->lat-maxRange-m_penWidth/2,
                                   2*maxRange+m_penWidth*2,
                                   2*maxRange+m_penWidth*2);
         if(rectsensor.width()*rectsensor.height()<rect.width()*rect.height())
@@ -43,7 +43,7 @@ QRectF DisplayGraphicsItem::boundingRect() const
 
     }else
     {
-        return QRectF(position->x-5-m_penWidth/2,-position->y-5-m_penWidth/2,20+m_penWidth*2,10+m_penWidth*2);
+        return QRectF(position->lon-5-m_penWidth/2,-position->lat-5-m_penWidth/2,20+m_penWidth*2,10+m_penWidth*2);
     }
 
 }
@@ -55,17 +55,17 @@ void DisplayGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
     m_sState=option->state;
 
     painter->save();
-    auto position=Entity::getPointer<Position>(m_eid);
+    auto position=Entity::getPointer<GCSPosition>(m_eid);
 
 
     QPainterPath path;
     //path.addRect(QRect(100,100,100,100));
 
     //path.addRect(QRect(m_fX-5,m_fY-5,20,10));
-    path.moveTo(position->x-5,-position->y-5);
-    path.lineTo(position->x+15,-position->y);
-    path.lineTo(position->x-5,-position->y+5);
-    path.lineTo(position->x-5,-position->y-5);
+    path.moveTo(position->lon-5,-position->lat-5);
+    path.lineTo(position->lon+15,-position->lat);
+    path.lineTo(position->lon-5,-position->lat+5);
+    path.lineTo(position->lon-5,-position->lat-5);
     if (option->state & QStyle::State_Selected)
     {
         painter->setPen(QPen(Qt::green, m_penWidth));
@@ -75,8 +75,8 @@ void DisplayGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
         for(Eid deid:sensorEquipment->device)
         {
             auto detection=Entity::getPointer<Detection>(deid);
-            path.addEllipse(QRectF(position->x-detection->range,-position->y-detection->range,2*detection->range,2*detection->range));
-            path.addRect(QRectF(position->x-2*detection->range,-position->y-2*detection->range,4*detection->range,4*detection->range));
+            path.addEllipse(QRectF(position->lon-detection->range,-position->lat-detection->range,2*detection->range,2*detection->range));
+            path.addRect(QRectF(position->lon-2*detection->range,-position->lat-2*detection->range,4*detection->range,4*detection->range));
         }
 
 
@@ -94,11 +94,11 @@ void DisplayGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
 void DisplayGraphicsItem::tick()
 {
 
-    auto position= Entity::getPointer<Position>(m_eid);
+    auto position= Entity::getPointer<GCSPosition>(m_eid);
 
 
-    setPos(position->x,-position->y);
-    setTransformOriginPoint(position->x,-position->y);
+    setPos(position->lon,-position->lat);
+    setTransformOriginPoint(position->lon,-position->lat);
 
     auto movement=Entity::getPointer<Movement>(m_eid);
     setRotation(-movement->direction);

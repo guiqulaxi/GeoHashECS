@@ -5,10 +5,10 @@ struct MovementFactor:Entity::Component
 {
 
     MovementFactor() {}
-    float maxSpeed=1;
-    float maxAcceleration=1;
-    float maxDeceleration=1;
-    float maxTurnAngle=20;
+    float maxSpeed=1; //m/s
+    float maxAcceleration=1; //m/s2
+    float maxDeceleration=1;//m/s2
+    float maxTurnAngle=20; // dgree/s
 
 
     static Cid cid;

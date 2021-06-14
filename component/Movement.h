@@ -7,8 +7,8 @@ struct Movement:Entity::Component
     Movement() {}
     Movement(float direction, float speed):direction(direction),speed(speed){}
     Movement(float speedx, float speedy,float speedz):speedx(speedx),speedy(speedy),speedz(speedz){}
-    float direction;
-    float speed;
+    float direction;//degree
+    float speed; //m/s
     float speedx;
     float speedy;
     float speedz;

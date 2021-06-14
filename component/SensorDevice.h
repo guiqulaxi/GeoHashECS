@@ -13,6 +13,7 @@ struct SensorDevice:Entity::Component
 
 
     SensorDevice() {}
+    SensorDevice(const std::string& _name):name(_name){};
     std::string name;
     std::vector<unsigned> target;
     SensorState  sensorState;

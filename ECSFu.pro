@@ -2,7 +2,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++11
+CONFIG += c++11 console
 
 
 # The following define makes your compiler emit warnings if you use
@@ -19,6 +19,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         DisplayGraphicsItem.cpp \
         EntityFu.cpp \
+        Geohash.cpp \
+        TireTree.cpp \
         system/CommunicationSystem.cpp \
         system/DetctionSystem.cpp \
         system/DisplaySystem.cpp \
@@ -40,6 +42,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     DisplayGraphicsItem.h \
     EntityFu.h \
+    Geohash.h \
+    TireTree.h \
     component/Ammo.h \
     component/CommunicationDevice.h \
     component/CommunicationEquipment.h \
@@ -49,7 +53,6 @@ HEADERS += \
     component/PrevPosition.h \
     system/CommunicationSystem.h \
     component/Damage.h \
-    component/DamageSystem.h \
     system/DetctionSystem.h \
     component/Detection.h \
     component/Faction.h \
@@ -60,10 +63,9 @@ HEADERS += \
     component/Guide.h \
     component/Health.h \
     component/Movement.h \
-    Mcomponent/ovementFactor.h \
+    component/MovementFactor.h \
     system/MovementSystem.h \
     component/Platform.h \
-    component/Position.h \
     component/SensorDevice.h \
     component/SensorEquipment.h \
     system/TrackSystem.h \
