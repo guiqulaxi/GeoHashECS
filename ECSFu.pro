@@ -20,7 +20,9 @@ SOURCES += \
         DisplayGraphicsItem.cpp \
         EntityFu.cpp \
         Geohash.cpp \
+
         TireTree.cpp \
+
         system/CommunicationSystem.cpp \
         system/DetctionSystem.cpp \
         system/DisplaySystem.cpp \

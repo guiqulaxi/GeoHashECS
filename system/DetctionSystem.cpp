@@ -15,6 +15,7 @@
 #include <QHash>
 #include <TireTree.h>
  CGeoHash DetctionSystem::_geohash;
+
 DetctionSystem::DetctionSystem()
 {
 
@@ -26,6 +27,39 @@ void cadinations1()
 }
 void DetctionSystem::tick( float deltaTime)
 {
+    qWarning()<<"tick";
+    auto all = Entity::getAll<SensorEquipment>();
+    std::vector<std::vector<double>> diss(all.size(),std::vector<double>(all.size(),-1));
+
+    int i=0;
+    for (auto eid : all)
+    {
+
+        auto sensorEquipment=Entity::getPointer<SensorEquipment>(eid);
+        auto position1=Entity::getPointer<GCSPosition>(eid);
+
+        for(auto deid :sensorEquipment->device)
+        {
+
+            auto detection=Entity::getPointer<Detection>(deid);
+            std::vector<Eid> target;
+            auto candinates = Entity::getAll<GCSPosition>();
+            int j=0;
+            for(auto eid1:candinates)
+            {
+                if(eid==eid1)
+                    continue;
+                auto position2=Entity::getPointer<GCSPosition>(eid1);
+                double  dis=0;
+                if(diss[i][j]<0)
+                {
+                       dis=  distance1(position1->lon,position1->lat,position2->lon,position2->lat);
+                       diss[i][j]=dis;
+                       diss[j][i]=dis;
+                }else
+                {
+                      dis=diss[i][j];
+
 
     auto all = Entity::getAll<SensorEquipment>();
     //std:unordered_map<std::vector<double>> diss(all.size(),std::vector<double>(all.size(),-1));
@@ -80,10 +114,10 @@ void DetctionSystem::tick( float deltaTime)
         }
     }
 
-
 }
 void DetctionSystem::tick1( float deltaTime)
 {
+
 
 
     //构建Lon轴排序，x轴差值 大于detection.range 肯定被排除
@@ -118,6 +152,7 @@ void DetctionSystem::tick1( float deltaTime)
     }
     all = Entity::getAll<SensorEquipment>();
     int count=0;
+
     for (auto eid : all)
     {
 
@@ -174,6 +209,8 @@ void DetctionSystem::tick1( float deltaTime)
                 {
                     target.push_back(eid1);
 
+
+
                 }
             }
            count+=target.size() ;
@@ -185,7 +222,9 @@ void DetctionSystem::tick1( float deltaTime)
     }
 
 
+
 }
+
 
 struct S
 {
@@ -195,6 +234,7 @@ struct S
     std::string geohash;
 
 };
+
 //void DetctionSystem::tick2( float deltaTime)
 //{
 //    std::string str;
@@ -308,10 +348,13 @@ void DetctionSystem::tick2( float deltaTime)
 
 
 
+
     //std::vector<std::vector<double>> diss(all.size(),std::vector<double>(all.size(),-1));
 
     all = Entity::getAll<SensorEquipment>();
+
     int count=0;
+
 
     for (auto eid : all)
     {
@@ -340,10 +383,12 @@ void DetctionSystem::tick2( float deltaTime)
                     continue;
                 double  dis=0;
                 auto position2=Entity::getPointer<GCSPosition>(id);
+
                 dis=  distance1(position1->lon,position1->lat,position2->lon,position2->lat);
                 double range=detection->range;
                 if(dis<=range)
                 {
+
 
                     target.push_back(id);
 
@@ -362,8 +407,6 @@ void DetctionSystem::tick2( float deltaTime)
 
 
 }
-
-
 
 
 
