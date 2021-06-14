@@ -57,7 +57,7 @@ void init()
     {
         for(int j=0;j<50;j++)
         {
-            Eid eid=Entity::create( new GCSPosition(120+0.7*i,25+j*0.7,0),
+            Eid eid=Entity::create( new GCSPosition(120+0.1*i,25+j*0.1,0),
                                     new Movement(90,1),
                                     new Platform,
                                     new Health,
@@ -67,8 +67,8 @@ void init()
           Eid sd1=Entity::create(new SensorDevice("sd1"),new Detection(20));
           Eid sd2=Entity::create(new SensorDevice("sd2"),new Detection(10000));
           Eid sd3=Entity::create(new SensorDevice("sd3"),new Detection(100000));
-          ss1->device.push_back(sd1);
-          //ss1->device.push_back(sd2);
+          //ss1->device.push_back(sd1);
+          ss1->device.push_back(sd2);
           //ss1->device.push_back(sd3);
           Entity::addComponent(eid,ss1);
         }
@@ -78,20 +78,23 @@ void init()
 void test()
 {
     init();
+    qWarning()<<"test";
     QTime time;
     time.start();
 
-    for(int i=0;i<10;i++)
+
+    for(int i=0;i<1;i++)
     {
         MovementSystem::tick(1);
         //DisplaySystem::tick(1);
         DetctionSystem::tick(1);
     }
     qWarning()<<time.elapsed()/1000.0<<"s";
-    Entity::destroyAll();
+
 }
 void test1()
 {
+     qWarning()<<"test1";
    init();
     QTime time;
     time.start();
@@ -107,19 +110,19 @@ void test1()
 }
 void test2()
 {
-
+qWarning()<<"test2";
      init();
     QTime time;
     time.start();
 
-    for(int i=0;i<10;i++)
+    for(int i=0;i<1;i++)
     {
         MovementSystem::tick(1);
         //DisplaySystem::tick(1);
         DetctionSystem::tick2(1);
     }
     qWarning()<<time.elapsed()/1000.0<<"s";
-    Entity::destroyAll();
+
 }
 
 int main(int argc, char *argv[])
@@ -128,31 +131,32 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
-    QGraphicsScene scene;
+//    QGraphicsScene scene;
 
-    scene.setItemIndexMethod(QGraphicsScene::NoIndex);
-    QGraphicsView view(&scene);
-    //    for(int i=0;i<100;i++)
-    //    {
-    //        QGraphicsEllipseItem *item=new QGraphicsEllipseItem(QRectF(0,0,10,10));
-    //       item->setPos(i*10,i*10);
-    //        scene.addItem(item);
-    //    }
+//    scene.setItemIndexMethod(QGraphicsScene::NoIndex);
+//    QGraphicsView view(&scene);
+//    //    for(int i=0;i<100;i++)
+//    //    {
+//    //        QGraphicsEllipseItem *item=new QGraphicsEllipseItem(QRectF(0,0,10,10));
+//    //       item->setPos(i*10,i*10);
+//    //        scene.addItem(item);
+//    //    }
 
-    view.setRenderHint(QPainter::Antialiasing);
-    //view.setBackgroundBrush(QPixmap(":/images/cheese.jpg"));
-    view.setCacheMode(QGraphicsView::CacheBackground);
-    view.setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
-    view.setDragMode(QGraphicsView::ScrollHandDrag);
-    view.setWindowTitle(QT_TRANSLATE_NOOP(QGraphicsView, ""));
-    view.setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    view.resize(400, 300);
-    view.show();
+//    view.setRenderHint(QPainter::Antialiasing);
+//    //view.setBackgroundBrush(QPixmap(":/images/cheese.jpg"));
+//    view.setCacheMode(QGraphicsView::CacheBackground);
+//    view.setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
+//    view.setDragMode(QGraphicsView::ScrollHandDrag);
+//    view.setWindowTitle(QT_TRANSLATE_NOOP(QGraphicsView, ""));
+//    view.setAlignment(Qt::AlignLeft | Qt::AlignTop);
+//    view.resize(400, 300);
+//    view.show();
 
 
 
    test();
-   //test1();
+  // test1();
+
    test2();
    return a.exec();
 

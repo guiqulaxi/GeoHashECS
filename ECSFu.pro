@@ -20,6 +20,9 @@ SOURCES += \
         DisplayGraphicsItem.cpp \
         EntityFu.cpp \
         Geohash.cpp \
+
+        TireTree.cpp \
+
         system/CommunicationSystem.cpp \
         system/DetctionSystem.cpp \
         system/DisplaySystem.cpp \
@@ -42,6 +45,7 @@ HEADERS += \
     DisplayGraphicsItem.h \
     EntityFu.h \
     Geohash.h \
+    TireTree.h \
     component/Ammo.h \
     component/CommunicationDevice.h \
     component/CommunicationEquipment.h \
@@ -51,7 +55,6 @@ HEADERS += \
     component/PrevPosition.h \
     system/CommunicationSystem.h \
     component/Damage.h \
-    component/DamageSystem.h \
     system/DetctionSystem.h \
     component/Detection.h \
     component/Faction.h \
@@ -62,7 +65,7 @@ HEADERS += \
     component/Guide.h \
     component/Health.h \
     component/Movement.h \
-    Mcomponent/ovementFactor.h \
+    component/MovementFactor.h \
     system/MovementSystem.h \
     component/Platform.h \
     component/SensorDevice.h \
