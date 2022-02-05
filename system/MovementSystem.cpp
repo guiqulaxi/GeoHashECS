@@ -5,7 +5,7 @@
 #include "component/GCSPosition.h"
 #include "component/SensorEquipment.h"
 #include "component/Platform.h"
-#include "Util.h"
+#include "GeoUtil.h"
 MovementSystem::MovementSystem()
 {
 

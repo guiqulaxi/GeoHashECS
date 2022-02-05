@@ -9,12 +9,15 @@
 #include "component/Platform.h"
 #include "component/SensorEquipment.h"
 #include "component/SensorDevice.h"
-#include "Util.h"
+#include "GeoUtil.h"
 #include "Geohash.h"
 #include <vector>
 #include <QHash>
 #include <TireTree.h>
- CGeoHash DetctionSystem::_geohash;
+#include "Point.hpp"
+#include "KDTreeUtil.hpp"
+#include "KDTree.hpp"
+CGeoHash DetctionSystem::_geohash;
 DetctionSystem::DetctionSystem()
 {
 
@@ -68,7 +71,7 @@ void DetctionSystem::tick( float deltaTime)
                 if(dis<=range)
                 {
                     target.push_back(eid1);
-                    //qWarning()<<eid1;
+                    //qWarning()<<eid<<"-->"<<eid1;
                 }
                 j++;
             }
@@ -79,7 +82,6 @@ void DetctionSystem::tick( float deltaTime)
 
         }
     }
-
 
 }
 void DetctionSystem::tick1( float deltaTime)
@@ -287,23 +289,75 @@ struct S
 //}
 void DetctionSystem::tick2( float deltaTime)
 {
+    auto all = Entity::getAll<SensorEquipment>();
+    //std:unordered_map<std::vector<double>> diss(all.size(),std::vector<double>(all.size(),-1));
+    std::unordered_map<Eid,std::unordered_map<Eid,double>> diss;
+
+    int count=0;
+    for (auto eid : all)
+    {
+
+        auto sensorEquipment=Entity::getPointer<SensorEquipment>(eid);
+        auto position1=Entity::getPointer<GCSPosition>(eid);
+
+        for(auto deid :sensorEquipment->device)
+        {
+
+            auto detection=Entity::getPointer<Detection>(deid);
+            std::vector<Eid> target;
+            auto candinates = Entity::getAll<GCSPosition>();
+            int j=0;
+            for(auto eid1:candinates)
+            {
+                if(eid==eid1)
+                    continue;
+                auto position2=Entity::getPointer<GCSPosition>(eid1);
+                double  dis=0;
+                if(diss[eid][eid1]==0)
+                {
+                       dis=  distance1(position1->lon,position1->lat,position2->lon,position2->lat);
+                       diss[eid][eid1]=dis;
+                       diss[eid1][eid]=dis;
+
+                }else
+                {
+                      dis=diss[eid1][eid];
+
+                }
+
+                double range=detection->range;
+
+                if(dis<=range)
+                {
+                    target.push_back(eid1);
+                    //qWarning()<<eid<<"-->"<<eid1;
+                }
+                j++;
+            }
+            count+=target.size();
+            auto sensorDevice =Entity::getPointer<SensorDevice>(deid);
+            sensorDevice->target.clear();
+            Entity::getPointer<SensorDevice>(deid)->target.assign(target.begin(),target.end());
+
+        }
+    }
+}
+
+void DetctionSystem::tick3( float deltaTime)
+{
     std::string str;
 
     auto all = Entity::getAll<GCSPosition>();
     //所有位置转为Geohash
     std::unordered_map<Eid,std::string> id_geohash;
-    int i=0;
-    TireTree<Eid> tireTree;
+
+    TrieTree<Eid> trieTree;
     for (auto eid : all)
     {
         auto position=Entity::getPointer<GCSPosition>(eid);
-
         str=_geohash.Encode(position->lat,position->lon,9);
-
-        tireTree.add(str,eid);
-        i++;
         id_geohash[eid]=str;
-
+        trieTree.insert(str,eid);
     }
 
 
@@ -328,14 +382,26 @@ void DetctionSystem::tick2( float deltaTime)
             //要使用Geohash的误差位数
             int effectnum=_geohash.GetDistancePrecision(detection->range);
             std::string effectStr=id_geohash[eid].substr(0,effectnum);
-             std::vector<Eid> candinates;
-            tireTree.get(effectStr,candinates,false);
-            //qWarning()<<candinates.size();
+            std::unordered_map<std::string,Eid> candinates;
+            //获得当前区域
+            trieTree.prefix(effectStr,candinates);
+            //获得相邻八个
+            std::vector<std::string> rs;
+            _geohash.GetNeighbors(effectStr,rs);
+            for(auto ss:rs)
+            {
+                std::unordered_map<std::string,Eid> cds;
+               trieTree.prefix(ss,cds);
+               candinates.insert(cds.begin(),cds.end());
+            }
+
 
             std::vector<Eid> target;
 
-            for(auto id:candinates)
+            for(auto hash_id:candinates)
             {
+                std::string geohash=hash_id.first;
+                Eid id=hash_id.second;
                 if(id==eid)
                     continue;
                 double  dis=0;
@@ -346,7 +412,7 @@ void DetctionSystem::tick2( float deltaTime)
                 {
 
                     target.push_back(id);
-
+                    //qWarning()<<eid<<"-->"<<id;
                 }
 
             }
@@ -363,7 +429,56 @@ void DetctionSystem::tick2( float deltaTime)
 
 }
 
+void DetctionSystem::tick4(float deltaTime)
+{
+    //_kdtree->radiusSearch(ns_geo::Point2d(120.0,20.0), 10460, vec, dis);
+
+     ns_geo::PointSet2<Eid> ps;
+    auto all = Entity::getAll<GCSPosition>();
+    for (auto eid : all)
+    {
+        auto position=Entity::getPointer<GCSPosition>(eid);
+        ps.push_back(ns_geo::Point2<Eid>(position->lon, position->lat));
+
+    }
+    ns_geo::KdTree2<ns_geo::Point2<Eid>> _kdtree(ps);
 
 
+    //std::vector<std::vector<double>> diss(all.size(),std::vector<double>(all.size(),-1));
+
+
+    all = Entity::getAll<SensorEquipment>();
+    int count=0;
+
+    for (auto eid : all)
+    {
+
+        auto sensorEquipment=Entity::getPointer<SensorEquipment>(eid);
+        auto position1=Entity::getPointer<GCSPosition>(eid);
+
+        for(auto deid :sensorEquipment->device)
+        {
+
+            auto detection=Entity::getPointer<Detection>(deid);
+            std::vector<ns_geo::Point2<Eid>> vec;
+            std::vector<float> dis;
+            _kdtree.radiusSearch(ns_geo::Point2<Eid>(position1->lon,position1->lat), detection->range, vec, dis);
+
+            std::vector<Eid> target;
+            auto sensorDevice =Entity::getPointer<SensorDevice>(deid);
+            sensorDevice->target.clear();
+
+           for(auto point:vec)
+            {
+               Entity::getPointer<SensorDevice>(deid)->target.push_back(point.value());
+            }
+            count+=target.size();
+
+
+
+            //qWarning()<<Entity::getPointer<SensorDevice>(deid)->target.size();
+        }
+    }
+}
 
 

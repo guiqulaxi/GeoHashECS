@@ -19,6 +19,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         DisplayGraphicsItem.cpp \
         EntityFu.cpp \
+        GeoUtil.cpp \
         Geohash.cpp \
         TireTree.cpp \
         system/CommunicationSystem.cpp \
@@ -27,9 +28,7 @@ SOURCES += \
         system/FusionSystem.cpp \
         system/MovementSystem.cpp \
         system/TrackSystem.cpp \
-        Util.cpp \
-        main.cpp \
-        sample.cpp
+        main.cpp
 
 TRANSLATIONS += \
     ECS_zh_CN.ts
@@ -42,7 +41,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     DisplayGraphicsItem.h \
     EntityFu.h \
+    GeoUtil.h \
     Geohash.h \
+    KDTree.hpp \
+    KDTreeUtil.hpp \
+    Point.hpp \
     TireTree.h \
     component/Ammo.h \
     component/CommunicationDevice.h \
@@ -69,7 +72,6 @@ HEADERS += \
     component/SensorDevice.h \
     component/SensorEquipment.h \
     system/TrackSystem.h \
-    Util.h \
     component/WeaponDevice.h \
     component/WeaponEquipment.h
 

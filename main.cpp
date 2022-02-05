@@ -27,7 +27,7 @@
 #include "component/Guide.h"
 #include "DisplayGraphicsItem.h"
 #include <QDebug>
-#include "Util.h"
+#include "GeoUtil.h"
 #include <component/CommunicationEquipment.h>
 #include <component/WeaponDevice.h>
 #include <component/WeaponEquipment.h>
@@ -53,7 +53,7 @@ void init()
 {
     Entity::destroyAll();
 
-    for (int i=0;i<50;i++)
+    for (int i=0;i<100;i++)
     {
         for(int j=0;j<50;j++)
         {
@@ -65,7 +65,7 @@ void init()
           auto ss1= new SensorEquipment;
 
           Eid sd1=Entity::create(new SensorDevice("sd1"),new Detection(20));
-          Eid sd2=Entity::create(new SensorDevice("sd2"),new Detection(10000));
+          Eid sd2=Entity::create(new SensorDevice("sd2"),new Detection(11200));
           Eid sd3=Entity::create(new SensorDevice("sd3"),new Detection(100000));
           //ss1->device.push_back(sd1);
           ss1->device.push_back(sd2);
@@ -123,6 +123,38 @@ qWarning()<<"test2";
     qWarning()<<time.elapsed()/1000.0<<"s";
 
 }
+void test3()
+{
+qWarning()<<"test3";
+     init();
+    QTime time;
+    time.start();
+
+    for(int i=0;i<1;i++)
+    {
+        MovementSystem::tick(1);
+        //DisplaySystem::tick(1);
+        DetctionSystem::tick3(1);
+    }
+    qWarning()<<time.elapsed()/1000.0<<"s";
+
+}
+void test4()
+{
+qWarning()<<"test4";
+     init();
+    QTime time;
+    time.start();
+
+    for(int i=0;i<1;i++)
+    {
+        MovementSystem::tick(1);
+        //DisplaySystem::tick(1);
+        DetctionSystem::tick4(1);
+    }
+    qWarning()<<time.elapsed()/1000.0<<"s";
+
+}
 
 int main(int argc, char *argv[])
 {
@@ -155,7 +187,9 @@ int main(int argc, char *argv[])
 
    test();
   // test1();
-   test2();
+   //test2();
+   test3();
+   test4();
    return a.exec();
 
 }

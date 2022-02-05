@@ -5,19 +5,16 @@
  * @author csl (3079625093@qq.com)
  * @version 0.1
  * @date 2021-12-11
- * 
+ *
  * @copyright Copyright (c) 2021
  */
 
-#include "point.hpp"
+#include "Point.hpp"
 #include <memory>
 #include <stack>
 #include <unordered_set>
 #include <iterator>
-#include <vector>
-#include<iostream>
-#include<math.h>
-#include<algorithm>
+
 namespace ns_geo
 {
 #pragma region global
@@ -30,9 +27,9 @@ namespace ns_geo
 
     /**
      * @brief Orderly exchange and partition dimensions in the composition of kdtree construction for kdtree2
-     * 
+     *
      * @param sf the split feature
-     * @return SplitFeature 
+     * @return SplitFeature
      */
     SplitFeature exfDime2(SplitFeature sf)
     {
@@ -41,9 +38,9 @@ namespace ns_geo
 
     /**
      * @brief Orderly exchange and partition dimensions in the composition of kdtree construction for kdtree3
-     * 
+     *
      * @param sf the split feature
-     * @return SplitFeature 
+     * @return SplitFeature
      */
     SplitFeature exfDime3(SplitFeature sf)
     {
@@ -75,27 +72,6 @@ namespace ns_geo
         return bl;
     }
 
-    template <typename _Ty>
-    bool atLeftTree(const Point3<_Ty> &p1, const Point3<_Ty> &p2, SplitFeature sf)
-    {
-        bool bl;
-        switch (sf)
-        {
-        case SplitFeature::X:
-            bl = p1.x() < p2.x() ? true : false;
-            break;
-        case SplitFeature::Y:
-            bl = p1.y() < p2.y() ? true : false;
-            break;
-        case SplitFeature::Z:
-            bl = p1.z() < p2.z() ? true : false;
-            break;
-        default:
-            bl = p1.x() < p2.x() ? true : false;
-            break;
-        }
-        return bl;
-    }
 
     template <typename _Ty>
     bool isIntersect(const Point2<_Ty> &searchPoint, const Point2<_Ty> &nodePoint, float radius, SplitFeature sf)
@@ -116,38 +92,17 @@ namespace ns_geo
         return bl;
     }
 
-    template <typename _Ty>
-    bool isIntersect(const Point3<_Ty> &searchPoint, const Point3<_Ty> &nodePoint, float radius, SplitFeature sf)
-    {
-        bool bl;
-        switch (sf)
-        {
-        case SplitFeature::X:
-            bl = std::abs(searchPoint.x() - nodePoint.x()) > radius ? false : true;
-            break;
-        case SplitFeature::Y:
-            bl = std::abs(searchPoint.y() - nodePoint.y()) > radius ? false : true;
-            break;
-        case SplitFeature::Z:
-            bl = std::abs(searchPoint.z() - nodePoint.z()) > radius ? false : true;
-            break;
-        default:
-            bl = std::abs(searchPoint.x() - nodePoint.x()) < radius ? false : true;
-            break;
-        }
-        return bl;
-    }
     /**
      * @brief the node used in the kdtree
-     * 
-     * @tparam _PointType 
+     *
+     * @tparam _PointType
      */
     template <typename _PointType>
     struct Node
     {
     public:
         using point_type = _PointType;
-        using value_type = typename point_type::value_type;
+       // using value_type = typename point_type::value_type;
         using node_ptr = std::shared_ptr<Node>;
 
     public:
@@ -172,15 +127,15 @@ namespace ns_geo
 
     /**
      * @brief the virtual base class int the kdtree system
-     * 
-     * @tparam _PointType 
+     *
+     * @tparam _PointType
      */
     template <typename _PointType>
     class KdTree
     {
     public:
         using point_type = _PointType;
-        using value_type = typename point_type::value_type;
+        //using value_type = typename point_type::value_type;
         using node_type = Node<point_type>;
         using node_ptr = std::shared_ptr<node_type>;
         using pointset_type = std::vector<point_type>;
@@ -201,7 +156,7 @@ namespace ns_geo
 
         /**
          * @brief print the kdtree by some order
-         * 
+         *
          * @param mode [1]:Pre order;[2]:middle order;[3]post order
          */
         void printKdTree(int mode = 1, std::ostream &os = std::cout, bool el = true) const
@@ -214,21 +169,21 @@ namespace ns_geo
 
         /**
          * @brief get the root of the kdtree
-         * 
-         * @return const node_ptr& 
+         *
+         * @return const node_ptr&
          */
         inline const node_ptr &root() const { return this->_root; }
 
         /**
          * @brief get the nodes' number on the kdtree
-         * 
-         * @return std::size_t 
+         *
+         * @return std::size_t
          */
         inline std::size_t size() const { return this->_size; }
 
         /**
          * @brief Search nearest K points from the search on the kdtree
-         * 
+         *
          * @param searchPoint the target search point
          * @param K the number of the nearest points
          * @param ps the point vector to save the search result
@@ -346,9 +301,9 @@ namespace ns_geo
         }
 
         /**
-         * @brief Search  points whose distance from 
+         * @brief Search  points whose distance from
          *        the search point is less than a specified distance on the kdtree
-         * 
+         *
          * @param searchPoint the target search point
          * @param radius the search radius
          * @param ps the point vector to save the search result
@@ -385,10 +340,10 @@ namespace ns_geo
                     ps.push_back(curNode->_p), dis.push_back(d);
 
                 /**
-                 * @brief if the current node is the main node and 
+                 * @brief if the current node is the main node and
                  *        is intersect with the search point,
                  *        than add it's sub nodes to the search path
-                 * 
+                 *
                  */
                 if (mainPath.find(curNode) != mainPath.cend() &&
                     isIntersect(searchPoint, curNode->_p, radius, curNode->_sf))
@@ -408,14 +363,14 @@ namespace ns_geo
     protected:
         /**
          * @brief initialize the root of the kdtree
-         * 
+         *
          * @param ps the point set
          */
         virtual void buildKdTree(pointset_type ps) = 0;
 
         /**
          * @brief Sort the point set with a dimension as a reference
-         * 
+         *
          * @param sf the reference feature
          * @param lps the point set on the left tree
          * @param rps the point set on the right tree
@@ -526,7 +481,6 @@ namespace ns_geo
     {
     public:
         using point_type = _PointType;
-        using value_type = typename point_type::value_type;
         using node_type = Node<point_type>;
         using node_ptr = std::shared_ptr<node_type>;
         using pointset_type = std::vector<point_type>;
@@ -602,61 +556,6 @@ namespace ns_geo
 
 #pragma endregion
 
-#pragma region refkdtree2
-    template <typename _PointType>
-    class RefKdTree2 : public KdTree2<_PointType>
-    {
-    public:
-        using refpoint_type = _PointType;
-        using value_type = typename refpoint_type::value_type;
-        using point_type = Point2<value_type>;
-        using refpointset_type = RefPointSet2<value_type>;
-        using partent_type = KdTree2<refpoint_type>;
-
-    public:
-        RefKdTree2() = delete;
-        RefKdTree2(const refpointset_type &ps)
-            : partent_type(trans(ps)) {}
-
-        /**
-         * @brief Search nearest K points from the search on the kdtree
-         * 
-         * @param searchPoint the target search point
-         * @param K the number of the nearest points
-         * @param ps the point vector to save the search result
-         * @param dis the distance
-         */
-        void nearestKSearch(const point_type &searchPoint, std::size_t K, std::vector<refpoint_type> &ps, std::vector<float> &dis) const
-        {
-            return partent_type::nearestKSearch({0, searchPoint.x(), searchPoint.y()}, K, ps, dis);
-        }
-
-        /**
-         * @brief Search  points whose distance from 
-         *        the search point is less than a specified distance on the kdtree
-         * 
-         * @param searchPoint the target search point
-         * @param radius the search radius
-         * @param ps the point vector to save the search result
-         * @param dis the distance
-         */
-        void radiusSearch(const point_type &searchPoint, float radius, std::vector<refpoint_type> &ps, std::vector<float> &dis) const
-        {
-            return partent_type::radiusSearch({0, searchPoint.x(), searchPoint.y()}, radius, ps, dis);
-        }
-
-    protected:
-        static std::vector<refpoint_type> trans(const refpointset_type &ps)
-        {
-            std::vector<refpoint_type> rps(ps.size());
-            int index = 0;
-            for (const auto &elem : ps)
-                rps[index++] = elem.second;
-            return rps;
-        }
-    };
-
-#pragma endregion
 
 
 } // namespace ns_geo
