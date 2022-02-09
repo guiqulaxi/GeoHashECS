@@ -82,6 +82,7 @@ void test()
     QTime time;
     time.start();
 
+
     for(int i=0;i<1;i++)
     {
         MovementSystem::tick(1);
@@ -187,9 +188,14 @@ int main(int argc, char *argv[])
 
    test();
   // test1();
+<<<<<<< HEAD
    //test2();
    test3();
    test4();
+=======
+
+   test2();
+>>>>>>> f247e8c1a555691977fadb705fe7f8b22cbfbb4e
    return a.exec();
 
 }

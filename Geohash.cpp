@@ -1,4 +1,5 @@
 #include "Geohash.h"
+
 #include <set>
 #include <stack>
 #include <QDebug>
