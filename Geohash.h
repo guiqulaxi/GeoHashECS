@@ -7,8 +7,8 @@
 #include <vector>
 
 #define D_R (M_PI / 180.0)
-const double EARTH_RADIUS_IN_METERS = 6372797.560856;
-
+const double EARTH_RADIUS_IN_METERS = 6378137;
+static double EARTH_ARC_IN_METERS = EARTH_RADIUS_IN_METERS*M_PI*2/360;
 //实现grohash算法的过程
 //add by freeeyes
 

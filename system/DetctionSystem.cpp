@@ -13,16 +13,12 @@
 #include "Geohash.h"
 #include <vector>
 #include <QHash>
-#include <TireTree.h>
-<<<<<<< HEAD
-#include "Point.hpp"
-#include "KDTreeUtil.hpp"
-#include "KDTree.hpp"
+#include "trietree/TireTree.h"
+#include "kdtree/Point.hpp"
+#include "kdtree/KDTreeUtil.hpp"
+#include "kdtree/KDTree.hpp"
+#include "rtree/RTree.h"
 CGeoHash DetctionSystem::_geohash;
-=======
- CGeoHash DetctionSystem::_geohash;
-
->>>>>>> f247e8c1a555691977fadb705fe7f8b22cbfbb4e
 DetctionSystem::DetctionSystem()
 {
 
@@ -36,39 +32,7 @@ void DetctionSystem::tick( float deltaTime)
 {
     qWarning()<<"tick";
     auto all = Entity::getAll<SensorEquipment>();
-    std::vector<std::vector<double>> diss(all.size(),std::vector<double>(all.size(),-1));
-
-    int i=0;
-    for (auto eid : all)
-    {
-
-        auto sensorEquipment=Entity::getPointer<SensorEquipment>(eid);
-        auto position1=Entity::getPointer<GCSPosition>(eid);
-
-        for(auto deid :sensorEquipment->device)
-        {
-
-            auto detection=Entity::getPointer<Detection>(deid);
-            std::vector<Eid> target;
-            auto candinates = Entity::getAll<GCSPosition>();
-            int j=0;
-            for(auto eid1:candinates)
-            {
-                if(eid==eid1)
-                    continue;
-                auto position2=Entity::getPointer<GCSPosition>(eid1);
-                double  dis=0;
-                if(diss[i][j]<0)
-                {
-                       dis=  distance1(position1->lon,position1->lat,position2->lon,position2->lat);
-                       diss[i][j]=dis;
-                       diss[j][i]=dis;
-                }else
-                {
-                      dis=diss[i][j];
-
-
-    auto all = Entity::getAll<SensorEquipment>();
+    //std::vector<std::vector<double>> diss(all.size(),std::vector<double>(all.size(),-1));
     //std:unordered_map<std::vector<double>> diss(all.size(),std::vector<double>(all.size(),-1));
     std::unordered_map<Eid,std::unordered_map<Eid,double>> diss;
 
@@ -94,13 +58,13 @@ void DetctionSystem::tick( float deltaTime)
                 double  dis=0;
                 if(diss[eid][eid1]==0)
                 {
-                       dis=  distance1(position1->lon,position1->lat,position2->lon,position2->lat);
-                       diss[eid][eid1]=dis;
-                       diss[eid1][eid]=dis;
+                    dis=  distance1(position1->lon,position1->lat,position2->lon,position2->lat);
+                    diss[eid][eid1]=dis;
+                    diss[eid1][eid]=dis;
 
                 }else
                 {
-                      dis=diss[eid1][eid];
+                    dis=diss[eid1][eid];
 
                 }
 
@@ -220,7 +184,7 @@ void DetctionSystem::tick1( float deltaTime)
 
                 }
             }
-           count+=target.size() ;
+            count+=target.size() ;
             auto sensorDevice =Entity::getPointer<SensorDevice>(deid);
             sensorDevice->target.clear();
             Entity::getPointer<SensorDevice>(deid)->target.assign(target.begin(),target.end());
@@ -360,13 +324,13 @@ void DetctionSystem::tick2( float deltaTime)
                 double  dis=0;
                 if(diss[eid][eid1]==0)
                 {
-                       dis=  distance1(position1->lon,position1->lat,position2->lon,position2->lat);
-                       diss[eid][eid1]=dis;
-                       diss[eid1][eid]=dis;
+                    dis=  distance1(position1->lon,position1->lat,position2->lon,position2->lat);
+                    diss[eid][eid1]=dis;
+                    diss[eid1][eid]=dis;
 
                 }else
                 {
-                      dis=diss[eid1][eid];
+                    dis=diss[eid1][eid];
 
                 }
 
@@ -439,8 +403,8 @@ void DetctionSystem::tick3( float deltaTime)
             for(auto ss:rs)
             {
                 std::unordered_map<std::string,Eid> cds;
-               trieTree.prefix(ss,cds);
-               candinates.insert(cds.begin(),cds.end());
+                trieTree.prefix(ss,cds);
+                candinates.insert(cds.begin(),cds.end());
             }
 
 
@@ -483,7 +447,7 @@ void DetctionSystem::tick4(float deltaTime)
 {
     //_kdtree->radiusSearch(ns_geo::Point2d(120.0,20.0), 10460, vec, dis);
 
-     ns_geo::PointSet2<Eid> ps;
+    ns_geo::PointSet2<Eid> ps;
     auto all = Entity::getAll<GCSPosition>();
     for (auto eid : all)
     {
@@ -494,7 +458,7 @@ void DetctionSystem::tick4(float deltaTime)
     ns_geo::KdTree2<ns_geo::Point2<Eid>> _kdtree(ps);
 
 
-<<<<<<< HEAD
+
     //std::vector<std::vector<double>> diss(all.size(),std::vector<double>(all.size(),-1));
 
 
@@ -519,9 +483,9 @@ void DetctionSystem::tick4(float deltaTime)
             auto sensorDevice =Entity::getPointer<SensorDevice>(deid);
             sensorDevice->target.clear();
 
-           for(auto point:vec)
+            for(auto point:vec)
             {
-               Entity::getPointer<SensorDevice>(deid)->target.push_back(point.value());
+                Entity::getPointer<SensorDevice>(deid)->target.push_back(point.value());
             }
             count+=target.size();
 
@@ -531,7 +495,80 @@ void DetctionSystem::tick4(float deltaTime)
         }
     }
 }
+bool search_iter(const double *rect, const void *item, void *udata) {
+    const Eid *pid = (const Eid*)item;
+    ((std::vector<Eid>*)udata)->push_back(*pid);
+    return true;
+}
+void DetctionSystem::tick5(float deltaTime)
+{
+    //_kdtree->radiusSearch(ns_geo::Point2d(120.0,20.0), 10460, vec, dis);
+
+    struct rtree *tr = rtree_new(sizeof(Eid*), 2);
+    auto all = Entity::getAll<GCSPosition>();
+    for (auto eid : all)
+    {
+        auto position=Entity::getPointer<GCSPosition>(eid);
+        Eid *pid=(Eid*)malloc(sizeof (Eid));
+
+        *pid=eid;
+        double *pos=new double[4]{position->lon,position->lat,position->lon,position->lat };
+        rtree_insert(tr, pos, pid);
+
+    }
+
+    //std::vector<std::vector<double>> diss(all.size(),std::vector<double>(all.size(),-1));
 
 
-=======
->>>>>>> f247e8c1a555691977fadb705fe7f8b22cbfbb4e
+    all = Entity::getAll<SensorEquipment>();
+    int count=0;
+
+    for (auto eid : all)
+    {
+
+        auto sensorEquipment=Entity::getPointer<SensorEquipment>(eid);
+        auto position1=Entity::getPointer<GCSPosition>(eid);
+
+        for(auto deid :sensorEquipment->device)
+        {
+
+            auto detection=Entity::getPointer<Detection>(deid);
+            std::vector<ns_geo::Point2<Eid>> vec;
+            std::vector<float> dis;
+            GeoRect rect=_geohash.GetBoundingBox(position1->lat,position1->lon,detection->range);
+            double rect1[4]={rect.east, rect.south,rect.west, rect.north };
+            std::vector<Eid> candinates;
+            rtree_search(tr,rect1, search_iter, &candinates);
+            std::vector<Eid> target;
+
+
+            for(auto id:candinates)
+            {
+
+
+                if(id==eid)
+                    continue;
+                double  dis=0;
+                auto position2=Entity::getPointer<GCSPosition>(id);
+
+                dis=  distance1(position1->lon,position1->lat,position2->lon,position2->lat);
+                double range=detection->range;
+                if(dis<=range)
+                {
+
+
+                    target.push_back(id);
+                    //qWarning()<<eid<<"-->"<<id;
+                }
+            }
+
+
+            Entity::getPointer<SensorDevice>(deid)->target=target;
+            count+=target.size();
+
+
+
+            //qWarning()<<Entity::getPointer<SensorDevice>(deid)->target.size();
+        }
+    }
+}

@@ -177,12 +177,19 @@ double CGeoHash::GetDistance(double dLatitude, double dLongitude, double dsLatit
 
 GeoRect CGeoHash::GetBoundingBox(double dLatitude, double dLongitude, double dRadiusMeters)
 {
-    GeoRect objGeoRect;
 
-    objGeoRect.west = dLongitude - Rad2Deg(dRadiusMeters/EARTH_RADIUS_IN_METERS/cos(Deg2Rad(dLatitude)));
-    objGeoRect.east = dLongitude + Rad2Deg(dRadiusMeters/EARTH_RADIUS_IN_METERS/cos(Deg2Rad(dLatitude)));
-    objGeoRect.north  = dLatitude - Rad2Deg(dRadiusMeters/EARTH_RADIUS_IN_METERS);
-    objGeoRect.south  = dLatitude + Rad2Deg(dRadiusMeters/EARTH_RADIUS_IN_METERS);
+    GeoRect objGeoRect;
+    objGeoRect.west = dLongitude + (dRadiusMeters )
+            / (EARTH_ARC_IN_METERS * cos(Deg2Rad(dLatitude)));
+    objGeoRect.east=dLongitude - (dRadiusMeters )
+            / (EARTH_ARC_IN_METERS * cos(Deg2Rad(dLatitude)));
+    objGeoRect.north = dLatitude + (dRadiusMeters ) / EARTH_ARC_IN_METERS;
+    objGeoRect.south = dLatitude -(dRadiusMeters ) / EARTH_ARC_IN_METERS;
+
+//    objGeoRect.west = dLongitude - Rad2Deg(dRadiusMeters/EARTH_RADIUS_IN_METERS/cos(Deg2Rad(dLatitude)));
+//    objGeoRect.east = dLongitude + Rad2Deg(dRadiusMeters/EARTH_RADIUS_IN_METERS/cos(Deg2Rad(dLatitude)));
+//    objGeoRect.north  = dLatitude - Rad2Deg(dRadiusMeters/EARTH_RADIUS_IN_METERS);
+//    objGeoRect.south  = dLatitude + Rad2Deg(dRadiusMeters/EARTH_RADIUS_IN_METERS);
 
     return objGeoRect;
 }

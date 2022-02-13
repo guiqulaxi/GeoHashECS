@@ -156,13 +156,28 @@ qWarning()<<"test4";
     qWarning()<<time.elapsed()/1000.0<<"s";
 
 }
+void test5()
+{
+qWarning()<<"test5";
+     init();
+    QTime time;
+    time.start();
 
+    for(int i=0;i<1;i++)
+    {
+        MovementSystem::tick(1);
+        //DisplaySystem::tick(1);
+        DetctionSystem::tick5(1);
+    }
+    qWarning()<<time.elapsed()/1000.0<<"s";
+
+}
 int main(int argc, char *argv[])
 {
 
 
-    QApplication a(argc, argv);
-
+    //QApplication a(argc, argv);
+    double sis=distance1(120.1,25.1,120,25);
 //    QGraphicsScene scene;
 
 //    scene.setItemIndexMethod(QGraphicsScene::NoIndex);
@@ -186,16 +201,13 @@ int main(int argc, char *argv[])
 
 
 
-   test();
+   //test();
   // test1();
-<<<<<<< HEAD
-   //test2();
-   test3();
-   test4();
-=======
 
-   test2();
->>>>>>> f247e8c1a555691977fadb705fe7f8b22cbfbb4e
-   return a.exec();
+   //test2();
+   //test3();
+   //test4();
+   test5();
+   //return a.exec();
 
 }

@@ -21,7 +21,8 @@ SOURCES += \
         EntityFu.cpp \
         GeoUtil.cpp \
         Geohash.cpp \
-        TireTree.cpp \
+        rtree/RTree.cpp \
+        trietree/TireTree.cpp \
         system/CommunicationSystem.cpp \
         system/DetctionSystem.cpp \
         system/DisplaySystem.cpp \
@@ -43,10 +44,13 @@ HEADERS += \
     EntityFu.h \
     GeoUtil.h \
     Geohash.h \
-    KDTree.hpp \
-    KDTreeUtil.hpp \
-    Point.hpp \
-    TireTree.h \
+    kdtree/KDTree.hpp \
+    kdtree/KDTreeUtil.hpp \
+    kdtree/Point.hpp \
+    rtree/Constants.h \
+    rtree/RTree.h \
+    rtree/Structs.h \
+    trietree/TireTree.h \
     component/Ammo.h \
     component/CommunicationDevice.h \
     component/CommunicationEquipment.h \

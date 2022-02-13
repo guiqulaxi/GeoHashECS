@@ -3,10 +3,11 @@
 
 #include<algorithm>
 #include <math.h>
+
 //地球赤道半径(m)
 static double  EARTH_RADIUS = 6378137;
 //地球每度的弧长(m)
-static double EARTH_ARC = 111199;
+static double EARTH_ARC = EARTH_RADIUS*M_PI/180;
 template <class T>
 T limit(T angle,int base)
 {
