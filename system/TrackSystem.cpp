@@ -24,14 +24,14 @@ void TrackSystem::tick(float deltaTime)
                                                  [position](unsigned aeid, unsigned beid) -> bool{
                 auto positionA=Entity::getPointer<GCSPosition>(aeid);
                 auto positionB=Entity::getPointer<GCSPosition>(beid);
-                return  distance1(positionA->lon,positionA->lat,position->lon,position->lat)<
-                distance1(positionB->lon,positionB->lat,position->lon,position->lat);
+                return   GEO::distance(positionA->lon,positionA->lat,position->lon,position->lat)<
+                 GEO::distance(positionB->lon,positionB->lat,position->lon,position->lat);
 
          } );
         if(nearestEntity!=fusion->target.end())
         {
             auto nearestPos= Entity::getPointer<GCSPosition>(*nearestEntity);
-            float targetAngle =azimuth(nearestPos->lon,nearestPos->lat,nearestPos->lon,nearestPos->lat);
+            float targetAngle = GEO::azimuth(nearestPos->lon,nearestPos->lat,nearestPos->lon,nearestPos->lat);
 
             targetAngle=targetAngle/(2*M_PI)*360;
             targetAngle=limit(targetAngle,360);

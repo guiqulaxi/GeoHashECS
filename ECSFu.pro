@@ -21,6 +21,7 @@ SOURCES += \
         EntityFu.cpp \
         GeoUtil.cpp \
         Geohash.cpp \
+        geodesic.c \
         rtree/RTree.cpp \
         trietree/TireTree.cpp \
         system/CommunicationSystem.cpp \
@@ -44,6 +45,7 @@ HEADERS += \
     EntityFu.h \
     GeoUtil.h \
     Geohash.h \
+    geodesic.h \
     kdtree/KDTree.hpp \
     kdtree/KDTreeUtil.hpp \
     kdtree/Point.hpp \

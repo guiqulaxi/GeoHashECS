@@ -58,7 +58,7 @@ void DetctionSystem::tick( float deltaTime)
                 double  dis=0;
                 if(diss[eid][eid1]==0)
                 {
-                    dis=  distance1(position1->lon,position1->lat,position2->lon,position2->lat);
+                    dis=   GEO::distance(position1->lon,position1->lat,position2->lon,position2->lat);
                     diss[eid][eid1]=dis;
                     diss[eid1][eid]=dis;
 
@@ -91,106 +91,106 @@ void DetctionSystem::tick1( float deltaTime)
 
 
 
-    //构建Lon轴排序，x轴差值 大于detection.range 肯定被排除
-    std::vector<std::pair<Eid,float>> entOrderedLon;
-    std::unordered_map<Eid,int> entIndexLon;
-    //构建Lat轴排序，Lat轴差值 大于detection.range 肯定被排除
-    std::vector<std::pair<Eid,float>> entOrderedLat;
-    std::unordered_map<Eid,int> entIndexLat;
-    //构建Z轴排序，Z轴差值 大于detection.range 肯定被排除
-    std::vector<std::pair<Eid,float>> entOrderedZ;
-    std::unordered_map<Eid,int> entIndexZ;
-    auto all = Entity::getAll<GCSPosition>();
-    for (auto eid : all)
-    {
-        auto position=Entity::getPointer<GCSPosition>(eid);
-        entOrderedLon.push_back(std::pair<Eid,float>(eid,position->lon));
-        entOrderedLat.push_back(std::pair<Eid,float>(eid,position->lat));
-        entOrderedZ.push_back(std::pair<Eid,float>(eid,position->z));
-    }
+//    //构建Lon轴排序，x轴差值 大于detection.range 肯定被排除
+//    std::vector<std::pair<Eid,float>> entOrderedLon;
+//    std::unordered_map<Eid,int> entIndexLon;
+//    //构建Lat轴排序，Lat轴差值 大于detection.range 肯定被排除
+//    std::vector<std::pair<Eid,float>> entOrderedLat;
+//    std::unordered_map<Eid,int> entIndexLat;
+//    //构建Z轴排序，Z轴差值 大于detection.range 肯定被排除
+//    std::vector<std::pair<Eid,float>> entOrderedZ;
+//    std::unordered_map<Eid,int> entIndexZ;
+//    auto all = Entity::getAll<GCSPosition>();
+//    for (auto eid : all)
+//    {
+//        auto position=Entity::getPointer<GCSPosition>(eid);
+//        entOrderedLon.push_back(std::pair<Eid,float>(eid,position->lon));
+//        entOrderedLat.push_back(std::pair<Eid,float>(eid,position->lat));
+//        entOrderedZ.push_back(std::pair<Eid,float>(eid,position->z));
+//    }
 
-    auto cmp = [](std::pair<Eid,float> a, std::pair<Eid,float> b)->bool {
-        return a.second<b.second; //从小到大
-    };
-    std::sort(entOrderedLon.begin(),entOrderedLon.end(),cmp);
-    std::sort(entOrderedLat.begin(),entOrderedLat.end(),cmp);
-    std::sort(entOrderedZ.begin(),entOrderedZ.end(),cmp);
-    for(size_t i=0;i<entOrderedLon.size();i++)
-    {
-        entIndexLon[entOrderedLon[i].first]=i;
-        entIndexLat[entOrderedLat[i].first]=i;
-        entIndexZ[entOrderedZ[i].first]=i;
-    }
-    all = Entity::getAll<SensorEquipment>();
-    int count=0;
+//    auto cmp = [](std::pair<Eid,float> a, std::pair<Eid,float> b)->bool {
+//        return a.second<b.second; //从小到大
+//    };
+//    std::sort(entOrderedLon.begin(),entOrderedLon.end(),cmp);
+//    std::sort(entOrderedLat.begin(),entOrderedLat.end(),cmp);
+//    std::sort(entOrderedZ.begin(),entOrderedZ.end(),cmp);
+//    for(size_t i=0;i<entOrderedLon.size();i++)
+//    {
+//        entIndexLon[entOrderedLon[i].first]=i;
+//        entIndexLat[entOrderedLat[i].first]=i;
+//        entIndexZ[entOrderedZ[i].first]=i;
+//    }
+//    all = Entity::getAll<SensorEquipment>();
+//    int count=0;
 
-    for (auto eid : all)
-    {
+//    for (auto eid : all)
+//    {
 
-        auto sensorEquipment=Entity::getPointer<SensorEquipment>(eid);
-        auto position1=Entity::getPointer<GCSPosition>(eid);
+//        auto sensorEquipment=Entity::getPointer<SensorEquipment>(eid);
+//        auto position1=Entity::getPointer<GCSPosition>(eid);
 
-        for(auto deid :sensorEquipment->device)
-        {
-            int indexLon=entIndexLon[eid];
-            int indexLat=entIndexLat[eid];
-            auto detection=Entity::getPointer<Detection>(deid);
-            std::set<Eid> candinates;
-            for(int i=indexLon-1;i>=0;i--)
-            {
-                if(fabs(entOrderedLon[i].second-position1->lon)*EARTH_ARC * cos(rad(position1->lat))<=detection->range)
-                {
-                    candinates.insert(entOrderedLon[i].first);
-                }
+//        for(auto deid :sensorEquipment->device)
+//        {
+//            int indexLon=entIndexLon[eid];
+//            int indexLat=entIndexLat[eid];
+//            auto detection=Entity::getPointer<Detection>(deid);
+//            std::set<Eid> candinates;
+//            for(int i=indexLon-1;i>=0;i--)
+//            {
+////                if(fabs(entOrderedLon[i].second-position1->lon)*EARTH_ARC * cos(rad(position1->lat))<=detection->range)
+////                {
+////                    candinates.insert(entOrderedLon[i].first);
+////                }
 
-            }
-            for(size_t i=indexLon+1;i<entOrderedLon.size();i++)
-            {
-                if(fabs(entOrderedLon[i].second-position1->lon)*EARTH_ARC * cos(rad(position1->lat))<=detection->range)
-                {
-                    candinates.insert(entOrderedLon[i].first);
-                }
-            }
-
-
-            for(int i=indexLat-1;i>=0;i--)
-            {
-                if(rad(fabs(entOrderedLat[i].second-position1->lat))*EARTH_ARC<=detection->range)
-                {
-                    candinates.insert(entOrderedLat[i].first);
-                }
-            }
-            for(size_t i=indexLat+1;i<entOrderedLat.size();i++)
-            {
-                if(rad(fabs(entOrderedLat[i].second-position1->lat))*EARTH_ARC<=detection->range)
-                {
-                    candinates.insert(entOrderedLat[i].first);
-                }
-            }
+//            }
+//            for(size_t i=indexLon+1;i<entOrderedLon.size();i++)
+//            {
+//                if(fabs(entOrderedLon[i].second-position1->lon)*EARTH_ARC * cos(rad(position1->lat))<=detection->range)
+//                {
+//                    candinates.insert(entOrderedLon[i].first);
+//                }
+//            }
 
 
-            std::vector<Eid> target;
+//            for(int i=indexLat-1;i>=0;i--)
+//            {
+////                if(rad(fabs(entOrderedLat[i].second-position1->lat))*EARTH_ARC<=detection->range)
+////                {
+////                    candinates.insert(entOrderedLat[i].first);
+////                }
+//            }
+//            for(size_t i=indexLat+1;i<entOrderedLat.size();i++)
+//            {
+//                if(rad(fabs(entOrderedLat[i].second-position1->lat))*EARTH_ARC<=detection->range)
+//                {
+//                    candinates.insert(entOrderedLat[i].first);
+//                }
+//            }
 
-            for(auto eid1:candinates)
-            {
-                auto position2=Entity::getPointer<GCSPosition>(eid1);
-                double  dis=  distance1(position1->lon,position1->lat,position2->lon,position2->lat);
-                double range=detection->range;
-                if(dis<=range)
-                {
-                    target.push_back(eid1);
+
+//            std::vector<Eid> target;
+
+//            for(auto eid1:candinates)
+//            {
+//                auto position2=Entity::getPointer<GCSPosition>(eid1);
+//                double  dis=   GEO::distance(position1->lon,position1->lat,position2->lon,position2->lat);
+//                double range=detection->range;
+//                if(dis<=range)
+//                {
+//                    target.push_back(eid1);
 
 
 
-                }
-            }
-            count+=target.size() ;
-            auto sensorDevice =Entity::getPointer<SensorDevice>(deid);
-            sensorDevice->target.clear();
-            Entity::getPointer<SensorDevice>(deid)->target.assign(target.begin(),target.end());
-            //qWarning()<<Entity::getPointer<SensorDevice>(deid)->target.size();
-        }
-    }
+//                }
+//            }
+//            count+=target.size() ;
+//            auto sensorDevice =Entity::getPointer<SensorDevice>(deid);
+//            sensorDevice->target.clear();
+//            Entity::getPointer<SensorDevice>(deid)->target.assign(target.begin(),target.end());
+//            //qWarning()<<Entity::getPointer<SensorDevice>(deid)->target.size();
+//        }
+//    }
 
 
 
@@ -324,7 +324,7 @@ void DetctionSystem::tick2( float deltaTime)
                 double  dis=0;
                 if(diss[eid][eid1]==0)
                 {
-                    dis=  distance1(position1->lon,position1->lat,position2->lon,position2->lat);
+                    dis=   GEO::distance(position1->lon,position1->lat,position2->lon,position2->lat);
                     diss[eid][eid1]=dis;
                     diss[eid1][eid]=dis;
 
@@ -419,7 +419,7 @@ void DetctionSystem::tick3( float deltaTime)
                 double  dis=0;
                 auto position2=Entity::getPointer<GCSPosition>(id);
 
-                dis=  distance1(position1->lon,position1->lat,position2->lon,position2->lat);
+                dis=   GEO::distance(position1->lon,position1->lat,position2->lon,position2->lat);
                 double range=detection->range;
                 if(dis<=range)
                 {
@@ -551,7 +551,7 @@ void DetctionSystem::tick5(float deltaTime)
                 double  dis=0;
                 auto position2=Entity::getPointer<GCSPosition>(id);
 
-                dis=  distance1(position1->lon,position1->lat,position2->lon,position2->lat);
+                dis=   GEO::distance(position1->lon,position1->lat,position2->lon,position2->lat);
                 double range=detection->range;
                 if(dis<=range)
                 {

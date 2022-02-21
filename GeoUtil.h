@@ -4,10 +4,6 @@
 #include<algorithm>
 #include <math.h>
 
-//地球赤道半径(m)
-static double  EARTH_RADIUS = 6378137;
-//地球每度的弧长(m)
-static double EARTH_ARC = EARTH_RADIUS*M_PI/180;
 template <class T>
 T limit(T angle,int base)
 {
@@ -58,13 +54,9 @@ T diffAngle(T a,T b)
     }
 
 }
-
-/**
- * @brief 转化为弧度(rad)
- * @param d
- * @return
- */
-double rad(double d);
+struct geod_geodesic;
+class GEO {
+public:
 /**
 * @brief 求两经纬度距离
  *
@@ -78,9 +70,7 @@ double rad(double d);
 *           第二点的纬度
 * @return 两点距离，单位m
 * */
-double distance1(double lon1, double lat1, double lon2,double lat2) ;
-double distance2(double lon1, double lat1, double lon2,double lat2) ;
- double distance3(double lon1, double lat1,double lon2, double lat2) ;
+static double distance(double lon1, double lat1, double lon2,double lat2) ;
 /**
        * 求两经纬度方向角
        *
@@ -94,7 +84,7 @@ double distance2(double lon1, double lat1, double lon2,double lat2) ;
        *            第二点的纬度
        * @return 方位角，角度（单位：°）
        * */
-double azimuth(double lon1, double lat1, double lon2,double lat2) ;
+static double azimuth(double lon1, double lat1, double lon2,double lat2);
 /**
        * 已知一点经纬度A，和与另一点B的距离和方位角，求B的经纬度
        *
@@ -108,5 +98,15 @@ double azimuth(double lon1, double lat1, double lon2,double lat2) ;
        *            AB方位角
        * @return B的经纬度
        * */
-void polar(double lon1, double lat1,double distance, double azimuth,double &lon,double& lat);
+static void polar(double lon1, double lat1,double distance, double azimuth,double &lon,double& lat);
+
+static int  init(double a = 6378137, double f = 1/298.257223563); /* WGS84 */
+
+private:
+    static int _init;
+    static struct geod_geodesic *_g;
+};
+
+
+
 #endif // UTIL_H

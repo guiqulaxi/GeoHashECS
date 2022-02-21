@@ -28,6 +28,7 @@
 #include "DisplayGraphicsItem.h"
 #include <QDebug>
 #include "GeoUtil.h"
+#include "geodesic.h"
 #include <component/CommunicationEquipment.h>
 #include <component/WeaponDevice.h>
 #include <component/WeaponEquipment.h>
@@ -49,15 +50,35 @@ Cid WeaponEquipment::cid = Entity::Component::numCids++;
 Cid SensorEquipment::cid = Entity::Component::numCids++;
 Cid CommunicationEquipment::cid = Entity::Component::numCids++;
 Cid MovementFactor::cid = Entity::Component::numCids++;
+#define NUM 50
+#define STEP 10000
+double LNG_LAT[NUM][NUM][2];
+void initLngLat()
+{
+    qsrand(time(nullptr));
+    double lng,lat;
+    GEO::polar(120,20,STEP/sqrt(2),0,lng,lat);
+    double latStep=lat-20;
+    double lngStep=lng-120;
+    double  rate=qrand()/(1.0*RAND_MAX);
+    for (int i=0;i<NUM;i++)
+    {
+        for(int j=0;j<NUM;j++)
+        {
+            LNG_LAT[i][j][0]=120+lngStep*i*rate;
+            LNG_LAT[i][j][1]=20+latStep*j*rate;
+        }
+    }
+}
 void init()
 {
     Entity::destroyAll();
 
-    for (int i=0;i<100;i++)
+    for (int i=0;i<NUM;i++)
     {
-        for(int j=0;j<50;j++)
+        for(int j=0;j<NUM;j++)
         {
-            Eid eid=Entity::create( new GCSPosition(120+0.1*i,25+j*0.1,0),
+            Eid eid=Entity::create( new GCSPosition(LNG_LAT[i][j][0],LNG_LAT[i][j][1],0),
                                     new Movement(90,1),
                                     new Platform,
                                     new Health,
@@ -177,7 +198,8 @@ int main(int argc, char *argv[])
 
 
     //QApplication a(argc, argv);
-    double sis=distance1(120.1,25.1,120,25);
+    double sis=GEO::distance(120.1,25,120,25);
+
 //    QGraphicsScene scene;
 
 //    scene.setItemIndexMethod(QGraphicsScene::NoIndex);

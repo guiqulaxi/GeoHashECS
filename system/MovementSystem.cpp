@@ -18,7 +18,7 @@ MovementSystem::MovementSystem()
         auto movement=Entity::getPointer<Movement>(eid);
         auto postion=Entity::getPointer<GCSPosition>(eid);
         float dis=movement->speed*deltaTime;
-        polar(postion->lon,postion->lat,dis,movement->direction,postion->lon,postion->lat);
+        GEO::polar(postion->lon,postion->lat,dis,movement->direction,postion->lon,postion->lat);
      }
 
 }
