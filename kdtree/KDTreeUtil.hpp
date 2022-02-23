@@ -45,7 +45,7 @@ namespace ns_geo
      template <typename _Ty>
     _Ty distanceGeo(const Point2<_Ty> &p1, const Point2<_Ty> &p2)
     {
-        return  GEO::distance(p1.x() ,p1.y(),p2.x() ,p2.y());
+        return  Geo::distance(p1.x() ,p1.y(),p2.x() ,p2.y());
     }
 
 #pragma endregion

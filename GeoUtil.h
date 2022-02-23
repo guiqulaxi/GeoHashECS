@@ -54,8 +54,38 @@ T diffAngle(T a,T b)
     }
 
 }
+
+namespace GEO {
+   const double PI                = 3.14159265359;
+   const double TWOPI             = 6.28318530718;
+   const double DE2RA             = 0.01745329252;
+   const double RA2DE             = 57.2957795129;
+   const double ERAD              = 6378.135;
+
+   const double ERADM             = 6378135.0;
+   const double AVG_ERAD          = 6371.378;
+    const double AVG_ERADM          = 6371378;
+   const double FLATTENING        = 1.0/298.257223563;
+                                  // Earth flattening (WGS '84)
+   const double EPS               = 0.000000000005;
+   const double KM2MI             = 0.621371;
+   const double GEOSTATIONARY_ALT = 35786.0;    // km
+}
+double ApproxDistance(double lat1, double lon1, double lat2,
+                      double lon2);
+double GCDistance(double lat1, double lon1, double lat2,
+                  double lon2);
+double EllipseArcLength(double lat1, double lat2,
+                        double a = GEO::ERAD,
+                        double f = GEO::FLATTENING);
+double GCAzimuth(double lat1, double lon1, double lat2, double lon2);
+bool GCIntersectSegment(double lat1A, double lon1A, double lat1B,
+                        double lon1B, double lat2A, double lon2A,
+                        double lat2B, double lon2B, double& lat3A,
+                        double& lon3A, double& lat3B, double& lon3B);
+
 struct geod_geodesic;
-class GEO {
+class Geo {
 public:
 /**
 * @brief 求两经纬度距离

@@ -13,6 +13,7 @@ public:
     T value;
     std::unordered_map<char,TireTreeNode<T>*> childNodes;
     bool isEnd=false;
+    std::unordered_map<std::string,T> subvalues;
 };
 template<typename T>
 class TrieTree
@@ -29,10 +30,14 @@ public:
 private:
     TireTreeNode<T>* insert(const std::string& key,T value,TireTreeNode<T>* node,int index)
     {
+
+
         if(!node)
         {
             node=new TireTreeNode<T>;
+
         }
+        node->subvalues[key]=value;
         if(key.length()==index)
         {
             node->value=value;
@@ -110,6 +115,14 @@ public:
     void prefix(const std::string& key,std::unordered_map<std::string,T>&values )
     {
         TireTreeNode<T>*  node=get(key,_root,0);
+        if(node)
+            values=node->subvalues;
+        //collect(key,node,values);
+    }
+
+    void prefixnormal(const std::string& key,std::unordered_map<std::string,T>&values )
+    {
+        TireTreeNode<T>*  node=get(key,_root,0);
         collect(key,node,values);
     }
 private:
@@ -134,6 +147,27 @@ private:
         }
 
     }
+//    void collect(const std::string& key,TireTreeNode<T>*node,std::unordered_map<std::string,T>&values )
+//    {
+//        if(!node)
+//        {
+//            return ;
+//        }
+//        if(node->isEnd)
+//        {
+//            values[key]=node->value;
+
+//        }
+//        else
+//        {
+//            for(auto &kv:node->childNodes)
+//            {
+//                collect(key+kv.first,kv.second,values);
+
+//            }
+//        }
+
+//    }
     void release(TireTreeNode<T>*node)
     {
         if(!node)

@@ -58,7 +58,7 @@ void initLngLat()
 {
     qsrand(time(nullptr));
     double lng,lat;
-    GEO::polar(120,20,STEP/sqrt(2),45,lng,lat);
+    Geo::polar(120,20,STEP/sqrt(2),45,lng,lat);
     double latStep=lat-20;
     double lngStep=lng-120;
     double  rate=qrand()/(1.0*RAND_MAX);
@@ -208,53 +208,67 @@ void testall()
        }
 
 
-    std::vector<int> step={50,100,500,1000,5000,10000,50000,100000,500000,1000000};
+    std::vector<int> step={1000000};
      std::vector<int> ranges={50,100,500,1000,5000,10000,50000,100000,500000,1000000};
+
 //       std::vector<int> step={100};
 //        std::vector<int> ranges={50};
-    ofile<<"Step"<<","<<"Range"<<","<<"no"<<","<<"ours"<<","<<"kdtree"<<","<<"rtree"<<std::endl;
+    ofile<<"Step"<<","<<"Range"<<","<<"no"<<","<<"ours(trietree-)"<<"ours(trietree+)"<<"ours(-geohash)"<<","<<"kdtree"<<","<<"rtree"<<std::endl;
     for(int i=0;i<step.size();i++)
     {
         STEP=step[i];
-
+         initLngLat();
         for(int j=0;j<ranges.size();j++)
         {
 
              RANGE=ranges[j];
-             if(STEP<RANGE)
+             if(STEP<=RANGE)
              {
                  continue;
              }
+             init();
+             DetctionSystem::tick(1);
 
-             initLngLat();
+             init();
+             QTime time;
+             time.start();
+             DetctionSystem::tick(1);
+             double t=time.elapsed()/1000.0;
+
              init();
              QTime time1;
              time1.start();
-             DetctionSystem::tick(1);
+             DetctionSystem::tick1(1);
              double t1=time1.elapsed()/1000.0;
-             initLngLat();
+
              init();
              QTime time2;
              time2.start();
-             DetctionSystem::tick3(1);
+             DetctionSystem::tick2(1);
              double t2=time2.elapsed()/1000.0;
-             initLngLat();
+
              init();
              QTime time3;
              time3.start();
-             DetctionSystem::tick4(1);
+             DetctionSystem::tick3(1);
              double t3=time3.elapsed()/1000.0;
-             initLngLat();
+
              init();
              QTime time4;
              time4.start();
-             DetctionSystem::tick5(1);
+             DetctionSystem::tick4(1);
              double t4=time4.elapsed()/1000.0;
 
 
-            //printf("[%f,%f]{%f,%f,%f,%f}\n",STEP,RANGE,t1,t2,1.0,2.0);
-             printf("[%f,%f]{%f,%f,%f,%f}\n",STEP,RANGE,t1,t2,t3,t4);
-             ofile<<STEP<<","<<RANGE<<","<<t1<<","<<t2<<","<<t3<<","<<t4<<std::endl;
+             init();
+             QTime time5;
+             time5.start();
+             DetctionSystem::tick5(1);
+             double t5=time5.elapsed()/1000.0;
+
+            //printf("[%f,%f]{%f,%f,%f,%f,%f,%f}\n",STEP,RANGE,t1,t2,1.0,2.0);
+             printf("[%f,%f]{%f,%f,%f,%f,%f,%f}\n",STEP,RANGE,t,t1,t2,t3,t4,t5);
+             ofile<<STEP<<","<<RANGE<<","<<t<<","<<t1<<","<<t2<<","<<t3<<","<<t4<<","<<t5<<std::endl;
         }
     }
       ofile.close();//④
@@ -264,7 +278,7 @@ int main(int argc, char *argv[])
 
 
     QApplication a(argc, argv);
-    double sis=GEO::distance(120.1,25,120,25);
+    double sis=Geo::distance(120.1,25,120,25);
     testall();
 //    QGraphicsScene scene;
 

@@ -11,10 +11,14 @@ public:
     DetctionSystem();
     //
     static void tick( float deltaTime) ;
+    //use trietree-
     static void tick1( float deltaTime) ;
+     //use trietree+
     static void tick2( float deltaTime) ;
-    //use trietree
+    //use trietree+-geohash
     static void tick3( float deltaTime) ;
+
+
     //use kdtree
     static void tick4(float deltaTime);
     //use rtree
