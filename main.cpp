@@ -51,13 +51,14 @@ Cid SensorEquipment::cid = Entity::Component::numCids++;
 Cid CommunicationEquipment::cid = Entity::Component::numCids++;
 Cid MovementFactor::cid = Entity::Component::numCids++;
 #define NUM 50
-#define STEP 10000
+double STEP=10000;
+double RANGE=0;
 double LNG_LAT[NUM][NUM][2];
 void initLngLat()
 {
     qsrand(time(nullptr));
     double lng,lat;
-    GEO::polar(120,20,STEP/sqrt(2),0,lng,lat);
+    GEO::polar(120,20,STEP/sqrt(2),45,lng,lat);
     double latStep=lat-20;
     double lngStep=lng-120;
     double  rate=qrand()/(1.0*RAND_MAX);
@@ -67,6 +68,7 @@ void initLngLat()
         {
             LNG_LAT[i][j][0]=120+lngStep*i*rate;
             LNG_LAT[i][j][1]=20+latStep*j*rate;
+
         }
     }
 }
@@ -78,6 +80,7 @@ void init()
     {
         for(int j=0;j<NUM;j++)
         {
+
             Eid eid=Entity::create( new GCSPosition(LNG_LAT[i][j][0],LNG_LAT[i][j][1],0),
                                     new Movement(90,1),
                                     new Platform,
@@ -86,7 +89,7 @@ void init()
           auto ss1= new SensorEquipment;
 
           Eid sd1=Entity::create(new SensorDevice("sd1"),new Detection(20));
-          Eid sd2=Entity::create(new SensorDevice("sd2"),new Detection(11200));
+          Eid sd2=Entity::create(new SensorDevice("sd2"),new Detection(RANGE));
           Eid sd3=Entity::create(new SensorDevice("sd3"),new Detection(100000));
           //ss1->device.push_back(sd1);
           ss1->device.push_back(sd2);
@@ -99,7 +102,7 @@ void init()
 void test()
 {
     init();
-    qWarning()<<"test";
+    qWarning()<<"no";
     QTime time;
     time.start();
 
@@ -147,7 +150,7 @@ qWarning()<<"test2";
 }
 void test3()
 {
-qWarning()<<"test3";
+qWarning()<<"ours";
      init();
     QTime time;
     time.start();
@@ -163,7 +166,7 @@ qWarning()<<"test3";
 }
 void test4()
 {
-qWarning()<<"test4";
+qWarning()<<"kdtree";
      init();
     QTime time;
     time.start();
@@ -179,7 +182,7 @@ qWarning()<<"test4";
 }
 void test5()
 {
-qWarning()<<"test5";
+qWarning()<<"rtree";
      init();
     QTime time;
     time.start();
@@ -193,13 +196,76 @@ qWarning()<<"test5";
     qWarning()<<time.elapsed()/1000.0<<"s";
 
 }
+#include<fstream>
+void testall()
+{
+    std::ofstream ofile;
+    ofile.open("result.txt", std::ios::out);//②
+       if(!ofile)
+       {
+
+           exit(1);
+       }
+
+
+    std::vector<int> step={50,100,500,1000,5000,10000,50000,100000,500000,1000000};
+     std::vector<int> ranges={50,100,500,1000,5000,10000,50000,100000,500000,1000000};
+//       std::vector<int> step={100};
+//        std::vector<int> ranges={50};
+    ofile<<"Step"<<","<<"Range"<<","<<"no"<<","<<"ours"<<","<<"kdtree"<<","<<"rtree"<<std::endl;
+    for(int i=0;i<step.size();i++)
+    {
+        STEP=step[i];
+
+        for(int j=0;j<ranges.size();j++)
+        {
+
+             RANGE=ranges[j];
+             if(STEP<RANGE)
+             {
+                 continue;
+             }
+
+             initLngLat();
+             init();
+             QTime time1;
+             time1.start();
+             DetctionSystem::tick(1);
+             double t1=time1.elapsed()/1000.0;
+             initLngLat();
+             init();
+             QTime time2;
+             time2.start();
+             DetctionSystem::tick3(1);
+             double t2=time2.elapsed()/1000.0;
+             initLngLat();
+             init();
+             QTime time3;
+             time3.start();
+             DetctionSystem::tick4(1);
+             double t3=time3.elapsed()/1000.0;
+             initLngLat();
+             init();
+             QTime time4;
+             time4.start();
+             DetctionSystem::tick5(1);
+             double t4=time4.elapsed()/1000.0;
+
+
+            //printf("[%f,%f]{%f,%f,%f,%f}\n",STEP,RANGE,t1,t2,1.0,2.0);
+             printf("[%f,%f]{%f,%f,%f,%f}\n",STEP,RANGE,t1,t2,t3,t4);
+             ofile<<STEP<<","<<RANGE<<","<<t1<<","<<t2<<","<<t3<<","<<t4<<std::endl;
+        }
+    }
+      ofile.close();//④
+}
 int main(int argc, char *argv[])
 {
 
 
-    //QApplication a(argc, argv);
+    QApplication a(argc, argv);
     double sis=GEO::distance(120.1,25,120,25);
-
+    testall();
 //    QGraphicsScene scene;
 
 //    scene.setItemIndexMethod(QGraphicsScene::NoIndex);
@@ -223,13 +289,63 @@ int main(int argc, char *argv[])
 
 
 
-   //test();
-  // test1();
 
-   //test2();
-   //test3();
-   //test4();
-   test5();
-   //return a.exec();
+   printf("50\n");
+   //STEP=20;
+   //RANGE=20;
+   //initLngLat();
+   //test();
+//   test3();
+//   test4();
+   //test5();
+//   printf("100\n");
+//   range=100;
+//   test();
+//   test3();
+//   test4();
+//   test5();
+//   printf("500\n");
+//   range=500;
+//   test();
+//   test3();
+//   test4();
+//   test5();
+  // printf("1000\n");
+//   range=1000;
+//   test();
+//   test3();
+//   test4();
+//   test5();
+   //printf("5000\n");
+//   range=5000;
+//   test();
+//   test3();
+//   test4();
+//   test5();
+   //printf("10000\n");
+//   range=10000;
+//   test();
+//   test3();
+//   test4();
+//   test5();
+//   printf("50000\n");
+//   range=50000;
+//   test();
+//   test3();
+//   test4();
+//   test5();
+//   printf("100000\n");
+//   range=100000;
+//   test();
+//   test3();
+//   test4();
+//   test5();
+//   printf("500000\n");
+//   range=500000;
+//   test();
+//   test3();
+//   test4();
+//   test5();
+   return a.exec();
 
 }

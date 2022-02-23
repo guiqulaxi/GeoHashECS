@@ -19,7 +19,7 @@ public:
     static void tick4(float deltaTime);
     //use rtree
     static void tick5(float deltaTime);
-private:
+
     static CGeoHash _geohash;
 
 };

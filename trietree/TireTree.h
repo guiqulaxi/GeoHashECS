@@ -109,7 +109,8 @@ public:
 public:
     void prefix(const std::string& key,std::unordered_map<std::string,T>&values )
     {
-        collect("",get(key,_root,0),values);
+        TireTreeNode<T>*  node=get(key,_root,0);
+        collect(key,node,values);
     }
 private:
     void collect(const std::string& key,TireTreeNode<T>*node,std::unordered_map<std::string,T>&values )
@@ -121,12 +122,14 @@ private:
         if(node->isEnd)
         {
             values[key]=node->value;
+
         }
         else
         {
             for(auto &kv:node->childNodes)
             {
                 collect(key+kv.first,kv.second,values);
+
             }
         }
 

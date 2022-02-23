@@ -30,7 +30,7 @@ void cadinations1()
 }
 void DetctionSystem::tick( float deltaTime)
 {
-    qWarning()<<"tick";
+
     auto all = Entity::getAll<SensorEquipment>();
     //std::vector<std::vector<double>> diss(all.size(),std::vector<double>(all.size(),-1));
     //std:unordered_map<std::vector<double>> diss(all.size(),std::vector<double>(all.size(),-1));
@@ -361,10 +361,12 @@ void DetctionSystem::tick3( float deltaTime)
     std::unordered_map<Eid,std::string> id_geohash;
 
     TrieTree<Eid> trieTree;
+
     for (auto eid : all)
     {
         auto position=Entity::getPointer<GCSPosition>(eid);
         str=_geohash.Encode(position->lat,position->lon,9);
+        //str=position->geohash;
         id_geohash[eid]=str;
         trieTree.insert(str,eid);
     }
@@ -488,9 +490,6 @@ void DetctionSystem::tick4(float deltaTime)
                 Entity::getPointer<SensorDevice>(deid)->target.push_back(point.value());
             }
             count+=target.size();
-
-
-
             //qWarning()<<Entity::getPointer<SensorDevice>(deid)->target.size();
         }
     }
@@ -536,7 +535,7 @@ void DetctionSystem::tick5(float deltaTime)
             std::vector<ns_geo::Point2<Eid>> vec;
             std::vector<float> dis;
             GeoRect rect=_geohash.GetBoundingBox(position1->lat,position1->lon,detection->range);
-            double rect1[4]={rect.east, rect.south,rect.west, rect.north };
+            double rect1[4]={rect.west, rect.south,rect.east, rect.north };
             std::vector<Eid> candinates;
             rtree_search(tr,rect1, search_iter, &candinates);
             std::vector<Eid> target;

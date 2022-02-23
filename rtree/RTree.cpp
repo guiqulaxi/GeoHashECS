@@ -13,9 +13,9 @@
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 
-#define ALLOW_REINSERTS
-#define MAXITEMS 32      // 32 max items per node
-#define MINFILL  20      // 20% min fill
+//#define ALLOW_REINSERTS
+#define MAXITEMS 2      // 32 max items per node
+#define MINFILL  100      // 20% min fill
 
 static void *(*_malloc)(size_t) = NULL;
 static void (*_free)(void *) = NULL;
